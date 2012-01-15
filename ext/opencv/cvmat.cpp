@@ -4577,13 +4577,14 @@ rb_flood_fill_bang(int argc, VALUE *argv, VALUE self)
     CvMat* mask_ptr = CVMAT(mask);
     cvSetZero(mask_ptr);
     cvFloodFill(self_ptr,
-		VALUE_TO_CVPOINT(seed_point),
-		VALUE_TO_CVSCALAR(new_val),
-		NIL_P(lo_diff) ? cvScalar(0) : VALUE_TO_CVSCALAR(lo_diff),
-		NIL_P(up_diff) ? cvScalar(0) : VALUE_TO_CVSCALAR(up_diff),
-		CVCONNECTEDCOMP(comp),
-		flags,
-		mask_ptr);
+      VALUE_TO_CVPOINT(seed_point),
+      VALUE_TO_CVSCALAR(new_val),
+      NIL_P(lo_diff) ? cvScalar(0) : VALUE_TO_CVSCALAR(lo_diff),
+      NIL_P(up_diff) ? cvScalar(0) : VALUE_TO_CVSCALAR(up_diff),
+      CVCONNECTEDCOMP(comp),
+      flags,
+      mask_ptr
+    );
   }
   catch (cv::Exception& e) {
     raise_cverror(e);
@@ -5302,25 +5303,18 @@ rb_accumulate_product(int argc, VALUE *argv, VALUE self)
 VALUE
 rb_accumulate_weighted(int argc, VALUE *argv, VALUE self)
 {
-  VALUE source, alpha, _mask;
-  rb_scan_args(argc, argv, "21", &source, &alpha, &_mask);
+  VALUE src, alpha, mask, dst;
+  rb_scan_args(argc, argv, "21", &src, &alpha, &mask);
+  dst = copy(self);//new_mat_kind_object(cvGetSize(self), self);
 
-  VALUE sum = Qnil;
-  CvArr* self_ptr = CVARR(self);
   try {
-    CvSize self_size = cvGetSize(self_ptr);
-    CvSize size = cvSize(self_size.width + 1, self_size.height + 1);
-    int type_cv64fcn = CV_MAKETYPE(CV_64F, CV_MAT_CN(cvGetElemType(self_ptr)));
-    sum = cCvMat::new_object(size, type_cv64fcn);
-    sum = CVARR(sum);
-    CvMat* mask = MASK(_mask);
-    cvAccumulateWeighted(self_ptr, &sum, NUM2DBL(alpha), mask);
+    cvRunningAvg(CVARR(src), CVARR(dst), NUM2DBL(alpha), MASK(mask));
   }
   catch (cv::Exception& e) {
     raise_cverror(e);
   }
 
-  return sum;
+  return dst;
 }
 
 
