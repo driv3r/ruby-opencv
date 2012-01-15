@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/home/driv3r/.rvm/rubies/ruby-1.9.2-p290/bin/ruby
 #/usr/local/bin/ruby
 =begin
 create Makefile script for Ruby/OpenCV

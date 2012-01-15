@@ -6,9 +6,12 @@ GEM
       rake (~> 0.8)
     hoe-gemspec (1.0.0)
       hoe (>= 2.2.0)
+    json (1.6.5)
     rake (0.9.2.2)
     rake-compiler (0.7.9)
       rake
+    rdoc (3.12)
+      json (~> 1.4)
     rspec (2.7.0)
       rspec-core (~> 2.7.0)
       rspec-expectations (~> 2.7.0)
@@ -25,4 +28,5 @@ DEPENDENCIES
   hoe
   hoe-gemspec
   rake-compiler
+  rdoc
   rspec

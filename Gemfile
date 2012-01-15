@@ -5,6 +5,7 @@ gem "hoe-gemspec"
 gem "rspec"
 gem "rake-compiler"
 
-group :test do
+group :test, :development do
   gem "rake"
+  gem "rdoc"
 end

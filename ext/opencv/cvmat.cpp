@@ -364,6 +364,10 @@ void define_ruby_class()
   rb_define_method(rb_klass, "mean_shift", RUBY_METHOD_FUNC(rb_mean_shift), 2);
   rb_define_method(rb_klass, "cam_shift", RUBY_METHOD_FUNC(rb_cam_shift), 2);
   rb_define_method(rb_klass, "snake_image", RUBY_METHOD_FUNC(rb_snake_image), -1);
+  rb_define_method(rb_klass, "accumulate", RUBY_METHOD_FUNC(rb_accumulate), -1);
+  rb_define_method(rb_klass, "accumulate_square", RUBY_METHOD_FUNC(rb_accumulate_square), -1);
+  rb_define_method(rb_klass, "accumulate_product", RUBY_METHOD_FUNC(rb_accumulate_product), -1);
+  rb_define_method(rb_klass, "accumulate_weighted", RUBY_METHOD_FUNC(rb_accumulate_weighted), -1);
 
   rb_define_method(rb_klass, "optical_flow_hs", RUBY_METHOD_FUNC(rb_optical_flow_hs), -1);
   rb_define_method(rb_klass, "optical_flow_lk", RUBY_METHOD_FUNC(rb_optical_flow_lk), 2);
@@ -952,7 +956,7 @@ rb_get_rows(VALUE self, VALUE args)
   VALUE ary = rb_ary_new2(len);
   for (int i = 0; i < len; ++i) {
     VALUE value = rb_ary_entry(args, i);
-    
+
     CvMat* row = NULL;
     try {
       if (FIXNUM_P(value))
@@ -1164,7 +1168,7 @@ rb_aref(VALUE self, VALUE args)
   int index[CV_MAX_DIM];
   for (int i = 0; i < RARRAY_LEN(args); ++i)
     index[i] = NUM2INT(rb_ary_entry(args, i));
-  
+
   CvScalar scalar = cvScalarAll(0);
   try {
     switch (RARRAY_LEN(args)) {
@@ -1176,7 +1180,7 @@ rb_aref(VALUE self, VALUE args)
       break;
     default:
       scalar = cvGetND(CVARR(self), index);
-      break;      
+      break;
     }
   }
   catch (cv::Exception& e) {
@@ -1277,7 +1281,7 @@ rb_set_data(VALUE self, VALUE data)
   }
 
   try {
-    cvSetData(self_ptr, array, self_ptr->step);    
+    cvSetData(self_ptr, array, self_ptr->step);
   }
   catch (cv::Exception& e) {
     raise_cverror(e);
@@ -1319,7 +1323,7 @@ rb_fill_bang(int argc, VALUE *argv, VALUE self)
   VALUE value, mask;
   rb_scan_args(argc, argv, "11", &value, &mask);
   try {
-    cvSet(CVARR(self), VALUE_TO_CVSCALAR(value), MASK(mask));    
+    cvSet(CVARR(self), VALUE_TO_CVSCALAR(value), MASK(mask));
   }
   catch (cv::Exception& e) {
     raise_cverror(e);
@@ -1881,7 +1885,7 @@ rb_mat_mul(int argc, VALUE *argv, VALUE self)
 {
   VALUE val, shiftvec, dest;
   rb_scan_args(argc, argv, "11", &val, &shiftvec);
-  CvArr* self_ptr = CVARR(self);  
+  CvArr* self_ptr = CVARR(self);
   dest = new_mat_kind_object(cvGetSize(self_ptr), self);
   try {
     if (NIL_P(shiftvec))
@@ -1945,7 +1949,7 @@ rb_div(int argc, VALUE *argv, VALUE self)
  *
  * The function calculates the weighted sum of two arrays as follows:
  *   dst(I)=src1(I)*alpha+src2(I)*beta+gamma
- * All the arrays must have the same type and the same size (or ROI size). 
+ * All the arrays must have the same type and the same size (or ROI size).
  * For types that have limited range this operation is saturating.
  */
 VALUE
@@ -2671,7 +2675,7 @@ rb_svd(int argc, VALUE *argv, VALUE self)
 
   CvMat* self_ptr = CVMAT(self);
   VALUE w = new_mat_kind_object(cvSize(self_ptr->cols, self_ptr->rows), self);
-  
+
   int rows = 0;
   int cols = 0;
   if (flag & CV_SVD_U_T) {
@@ -3476,7 +3480,7 @@ rb_canny(int argc, VALUE *argv, VALUE self)
     aperture_size = INT2FIX(3);
   CvArr* self_ptr = CVARR(self);
   VALUE dest = new_mat_kind_object(cvGetSize(self_ptr), self);
-  
+
   try {
     cvCanny(self_ptr, CVARR(dest), NUM2INT(thresh1), NUM2INT(thresh2), NUM2INT(aperture_size));
   }
@@ -3828,7 +3832,7 @@ rb_warp_affine(int argc, VALUE *argv, VALUE self)
 /*
  * call-seq:
  *   CvMat.find_homograpy(<i>src_points, dst_points[,method = :all][,ransac_reproj_threshold = 0][,get_status = nil]</i>) -> cvmat
- * 
+ *
  * Finds the perspective transformation between two planes.
  * <i>src_points:</i> Coordinates of the points in the original plane, 2xN, Nx2, 3xN or Nx3 1-channel array (the latter two are for representation in homogeneous coordinates), where N is the number of points. 1xN or Nx1 2- or 3-channel array can also be passed.
  * <i>dst_points:</i> Point coordinates in the destination plane, 2xN, Nx2, 3xN or Nx3 1-channel, or 1xN or Nx1 2- or 3-channel array.
@@ -4217,7 +4221,7 @@ rb_smooth(int argc, VALUE *argv, VALUE self)
   VALUE smoothtype, p1, p2, p3, p4;
   rb_scan_args(argc, argv, "14", &smoothtype, &p1, &p2, &p3, &p4);
   int _smoothtype = CVMETHOD("SMOOTHING_TYPE", smoothtype, -1);
-  
+
   VALUE (*smooth_func)(int c, VALUE* v, VALUE s);
   argc--;
   switch (_smoothtype) {
@@ -4363,7 +4367,7 @@ rb_integral(int argc, VALUE *argv, VALUE self)
   catch (cv::Exception& e) {
     raise_cverror(e);
   }
-  
+
   if ((need_sqsum != Qtrue) && (need_tiled_sum != Qtrue))
     return sum;
   else {
@@ -4414,7 +4418,7 @@ rb_threshold(int argc, VALUE *argv, VALUE self)
   int type = CVMETHOD("THRESHOLD_TYPE", threshold_type, INVALID_TYPE);
   if (type == INVALID_TYPE)
     rb_raise(rb_eArgError, "Invalid threshold type.");
-  
+
   return rb_threshold_internal(type, threshold, max_value, use_otsu, self);
 }
 
@@ -4816,7 +4820,8 @@ rb_moments(int argc, VALUE *argv, VALUE self)
  *   hough_lines(<i>method, rho, theta, threshold, param1, param2</i>) -> cvseq(include CvLine or CvTwoPoints)
  *
  * Finds lines in binary image using a Hough transform.
- * * method –
+ * * method –
+
  * *   The Hough transform variant, one of the following:
  * *   - CV_HOUGH_STANDARD - classical or standard Hough transform.
  * *   - CV_HOUGH_PROBABILISTIC - probabilistic Hough transform (more efficient in case if picture contains a few long linear segments).
@@ -4824,12 +4829,14 @@ rb_moments(int argc, VALUE *argv, VALUE self)
  * * rho - Distance resolution in pixel-related units.
  * * theta - Angle resolution measured in radians.
  * * threshold - Threshold parameter. A line is returned by the function if the corresponding accumulator value is greater than threshold.
- * * param1 –
+ * * param1 –
+
  * *   The first method-dependent parameter:
  * *     For the classical Hough transform it is not used (0).
  * *     For the probabilistic Hough transform it is the minimum line length.
  * *     For the multi-scale Hough transform it is the divisor for the distance resolution . (The coarse distance resolution will be rho and the accurate resolution will be (rho / param1)).
- * * param2 –
+ * * param2 –
+
  * *   The second method-dependent parameter:
  * *     For the classical Hough transform it is not used (0).
  * *     For the probabilistic Hough transform it is the maximum gap between line segments lying on the same line to treat them as a single line segment (i.e. to join them).
@@ -4880,7 +4887,7 @@ rb_hough_circles(int argc, VALUE *argv, VALUE self)
 {
   const int INVALID_TYPE = -1;
   VALUE method, dp, min_dist, param1, param2, min_radius, max_radius, storage;
-  rb_scan_args(argc, argv, "52", &method, &dp, &min_dist, &param1, &param2, 
+  rb_scan_args(argc, argv, "52", &method, &dp, &min_dist, &param1, &param2,
 	       &min_radius, &max_radius);
   storage = cCvMemStorage::new_object();
   int method_flag = CVMETHOD("HOUGH_TRANSFORM_METHOD", method, INVALID_TYPE);
@@ -5058,7 +5065,7 @@ rb_mean_shift(VALUE self, VALUE window, VALUE criteria)
 {
   VALUE comp = cCvConnectedComp::new_object();
   try {
-    cvMeanShift(CVARR(self), VALUE_TO_CVRECT(window), VALUE_TO_CVTERMCRITERIA(criteria), CVCONNECTEDCOMP(comp));    
+    cvMeanShift(CVARR(self), VALUE_TO_CVRECT(window), VALUE_TO_CVTERMCRITERIA(criteria), CVCONNECTEDCOMP(comp));
   }
   catch (cv::Exception& e) {
     raise_cverror(e);
@@ -5169,9 +5176,153 @@ rb_snake_image(int argc, VALUE *argv, VALUE self)
   for (i = 0; i < length; ++i)
     rb_ary_push(result, cCvPoint::new_object(pointset[i]));
   cvFree(&pointset);
-  
+
   return result;
 }
+
+
+/*
+ * call-seq:
+ *   accumulate(<i>src[, mask = nil]</i>) -> cvmat(result)
+ *
+ * Adds an image (src) to the accumulator(dst/self).
+ *
+ * Accumulator should have same number of channels as source, 32-bit or 64-bit floating-point.
+ *
+ * The function adds src or some of its elements to dst and return a new object as a result:
+ *
+ *   result(x,y) <- dst(x,y) + src(x,y) if mask(x,y) != 0
+ *
+ * The function supports multi-channel images. Each channel is processed independently.
+ *
+ * The functions accumulate* can be used, for example, to collect statistics of
+ * a scene background viewed by a still camera and for the further foreground-background segmentation.
+ *
+ * src
+ *   Input image as 1- or 3-channel, 8-bit or 32-bit floating point.
+ * mask
+ *   Optional operation mask.
+ *
+ */
+VALUE
+rb_accumulate(int argc, VALUE *argv, VALUE self)
+{
+  VALUE source, mask;
+  rb_scan_args(argc, argv, "11", &source, &mask);
+  return self;
+}
+
+
+/*
+ * call-seq:
+ *   accumulate_square(<i>src[, mask = nil]</i>) -> cvmat(result)
+ *
+ * Adds the square of a source(src) image to the accumulator(dst/self)
+ *
+ * Accumulator should have same number of channels as source, 32-bit or 64-bit floating-point.
+ *
+ * The function adds the input image src or its selected region, raised to a power of 2,
+ * to the accumulator dst and return a new object as a result:
+ *
+ *   result(x,y) <- dst(x,y) + src(x,y)^2 if mask(x,y) != 0
+ *
+ * The function supports multi-channel images. Each channel is processed independently.
+ *
+ * src
+ *   Input image as 1- or 3-channel, 8-bit or 32-bit floating point.
+ * mask
+ *   Optional operation mask.
+ *
+ */
+VALUE
+rb_accumulate_square(int argc, VALUE *argv, VALUE self)
+{
+  VALUE source, mask;
+  rb_scan_args(argc, argv, "11", &source, &mask);
+  return self;
+}
+
+
+/*
+ * call-seq:
+ *   accumulate_product(<i>src1, src2[, mask = nil]</i>) -> cvmat(result)
+ *
+ * Adds the per-element product of two input images to the accumulator(dst/self)
+ *
+ * Accumulator should have same number of channels as source, 32-bit or 64-bit floating-point.
+ *
+ * The function adds the product of two images or their selected regions to the accumulator dst:
+ *
+ *   result(x,y) <- dst(x,y) + src1(x,y) * src2(x,y) if mask(x,y) != 0
+ *
+ * The function supports multi-channel images. Each channel is processed independently.
+ *
+ * src1
+ *   Input image as 1- or 3-channel, 8-bit or 32-bit floating point.
+ * src2
+ *   Same as src1
+ * mask
+ *   Optional operation mask.
+ *
+ */
+VALUE
+rb_accumulate_product(int argc, VALUE *argv, VALUE self)
+{
+  VALUE source1, source2, mask;
+  rb_scan_args(argc, argv, "21", &source1, &source2, &mask);
+  return self;
+}
+
+
+/*
+ * call-seq:
+ *   accumulate_weighted(<i>src, alpha[, mask = nil]</i>) -> cvmat(result)
+ *
+ * Updates a running average.
+ *
+ * Accumulator should have same number of channels as source, 32-bit or 64-bit floating-point.
+ *
+ * The function calculates the weighted sum of the input image src and the
+ * accumulator dst so that dst becomes a running average of a frame sequence:
+ *
+ *   result(x,y) <- (1-alpha) * dst(x,y) + alpha * src(x,y) if mask(x,y) != 0
+ *
+ * That is, alpha regulates the update speed (how fast the accumulator “forgets”
+ * about earlier images). The function supports multi-channel images.
+ * Each channel is processed independently.
+ *
+ * src
+ *   Input image as 1- or 3-channel, 8-bit or 32-bit floating point.
+ * alpha
+ *   Weight of the input image.
+ * mask
+ *   Optional operation mask.
+ *
+ */
+VALUE
+rb_accumulate_weighted(int argc, VALUE *argv, VALUE self)
+{
+  VALUE source, alpha, _mask;
+  rb_scan_args(argc, argv, "21", &source, &alpha, &_mask);
+
+  VALUE sum = Qnil;
+  CvArr* self_ptr = CVARR(self);
+  try {
+    CvSize self_size = cvGetSize(self_ptr);
+    CvSize size = cvSize(self_size.width + 1, self_size.height + 1);
+    int type_cv64fcn = CV_MAKETYPE(CV_64F, CV_MAT_CN(cvGetElemType(self_ptr)));
+    sum = cCvMat::new_object(size, type_cv64fcn);
+    sum = CVARR(sum);
+    CvMat* mask = MASK(_mask);
+    cvAccumulateWeighted(self_ptr, &sum, NUM2DBL(alpha), mask);
+  }
+  catch (cv::Exception& e) {
+    raise_cverror(e);
+  }
+
+  return sum;
+}
+
 
 /*
  * call-seq:
@@ -5412,7 +5563,7 @@ rb_compute_correspond_epilines(VALUE klass, VALUE points, VALUE which_image, VAL
     n = points_ptr->cols;
   else
     rb_raise(rb_eArgError, "input points should 2xN, Nx2 or 3xN, Nx3 matrix(N >= 7).");
-  
+
   correspondent_lines = cCvMat::new_object(n, 3, CV_MAT_DEPTH(points_ptr->type));
   try {
     cvComputeCorrespondEpilines(points_ptr, NUM2INT(which_image), CVMAT_WITH_CHECK(fundamental_matrix),
@@ -5454,7 +5605,7 @@ rb_extract_surf(int argc, VALUE *argv, VALUE self)
     raise_cverror(e);
   }
   VALUE _keypoints = cCvSeq::new_sequence(cCvSeq::rb_class(), keypoints, cCvSURFPoint::rb_class(), storage);
-  
+
   // Create descriptor array
   const int DIM_SIZE = (params.extended) ? 128 : 64;
   const int NUM_KEYPOINTS = keypoints->total;
@@ -5467,7 +5618,7 @@ rb_extract_surf(int argc, VALUE *argv, VALUE self)
     }
     rb_ary_store(_descriptors, m, elem);
   }
-  
+
   return rb_assoc_new(_keypoints, _descriptors);
 }
 

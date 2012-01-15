@@ -367,7 +367,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
     mat2 = mat0.warp_affine(map_matrix, :nn)
     mat3 = mat0.warp_affine(map_matrix, :linear, :fill_outliers, CvColor::Yellow)
     mat4 = mat0.warp_affine(map_matrix, :linear, :inverse_map)
-    
+
     assert_equal('da3d7cdefabbaf84c4080ecd40d00897', hash_img(mat1))
     assert_equal('b4abcd12c4e1103c3de87bf9ad854936', hash_img(mat2))
     assert_equal('26f6b10e955125c91fd7e63a63cc06a3', hash_img(mat3))
@@ -417,15 +417,15 @@ class TestCvMat_imageprocessing < OpenCVTestCase
     # (0, 255)    =>  (0, 275)
     map_matrix = CvMat.new(3, 3, :cv32f, 1)
     map_matrix[0] = CvScalar.new(0.72430)
-    map_matrix[1] = CvScalar.new(-0.19608) 
-    map_matrix[2] = CvScalar.new(50.00000) 
-    map_matrix[3] = CvScalar.new(0.0) 
+    map_matrix[1] = CvScalar.new(-0.19608)
+    map_matrix[2] = CvScalar.new(50.00000)
+    map_matrix[3] = CvScalar.new(0.0)
     map_matrix[4] = CvScalar.new(0.62489)
     map_matrix[5] = CvScalar.new(0.0)
     map_matrix[6] = CvScalar.new(0.00057)
     map_matrix[7] = CvScalar.new(-0.00165)
     map_matrix[8] = CvScalar.new(1.00000)
-    
+
     mat1 = mat0.warp_perspective(map_matrix)
     mat2 = mat0.warp_perspective(map_matrix, :nn)
     mat3 = mat0.warp_perspective(map_matrix, :linear, :inverse_map)
@@ -495,7 +495,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
     mat1 = mat0.log_polar(CvSize.new(255, 255), CvPoint2D32f.new(mat0.width / 2, mat0.height / 2), 40,
                           CV_INTER_LINEAR | CV_WARP_FILL_OUTLIERS)
     assert_equal('d0425614b2f6e63ab2b6ef6637b4efcb', hash_img(mat1))
-    
+
     mat2 = mat1.log_polar(mat0.size, CvPoint2D32f.new(mat0.width / 2, mat0.height / 2), 40,
                           CV_INTER_LINEAR | CV_WARP_FILL_OUTLIERS | CV_WARP_INVERSE_MAP)
     assert_equal('52587e593fec1b0383731be53147e8cd', hash_img(mat2))
@@ -535,7 +535,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
     mat6 = mat1.erode(IplConvKernel.new(5, 5, 2, 2, :cross))
     mat7 = mat0.clone
     mat7.erode!
-    
+
     assert_equal('075eb0e281328f768eb862735d16979d', hash_img(mat3))
     assert_equal('075eb0e281328f768eb862735d16979d', hash_img(mat4))
     assert_equal('9f02fc4438b1d69fea75a10dfd2b66b0', hash_img(mat5))
@@ -634,7 +634,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
       }
     }
   end
-  
+
   def test_smooth
     mat0 = CvMat.load(FILENAME_LENA32x32, CV_LOAD_IMAGE_GRAYSCALE)
 
@@ -736,7 +736,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
     assert_raise(TypeError) {
       mat0.smooth(CV_GAUSSIAN, 3, 0, 0, DUMMY_OBJ)
     }
-    
+
     # Median
     mat0 = create_cvmat(64, 64, :cv8u, 1) { |j, i, c|
       if (i + j) % 15 != 0
@@ -791,7 +791,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
   def test_filter2d
     mat0 = CvMat.load(FILENAME_LENA256x256, CV_LOAD_IMAGE_GRAYSCALE)
     kernel = CvMat.new(3, 3, :cv32f, 1)
-    
+
     # Laplacian filter kernel
     laplace4 = [0, 1, 0,
                 1, -4, 1,
@@ -826,7 +826,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
       mat2 = mat0.copy_make_border(type, CvSize.new(300, 300), CvPoint.new(30, 30))
       assert_equal('96940dc9e3abb6e2556ea51af1468031', hash_img(mat2))
     }
-    
+
     assert_raise(TypeError) {
       mat0.copy_make_border(DUMMY_OBJ, CvSize.new(64, 48), CvPoint.new(16, 8))
     }
@@ -880,7 +880,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
     assert(result5.all? {|a| a.class == CvMat})
     result_sum << result5[0]
     result_tiled_sum << result5[1]
-    
+
     (result_sum + result_sqsum + result_tiled_sum).each { |s|
       assert_equal(mat0.height + 1, s.height)
       assert_equal(mat0.width + 1, s.width)
@@ -897,7 +897,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
         assert_in_delta(x, sum[i][0], 0.001)
       }
     }
-    
+
     expected_sqsum = [0, 0, 0, 0,
                       0, 0, 1, 5,
                       0, 9, 26, 55,
@@ -1118,7 +1118,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
       assert_nil(contours.h_next.h_next.v_next)
       assert_nil(contours.h_next.h_next.h_next.v_next)
     }
-    
+
     contours = mat0.find_contours(:mode => CV_RETR_TREE)
     assert_not_nil(contours)
     assert_equal(4, contours.total)
@@ -1506,7 +1506,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
   def test_match_template
     mat = CvMat.load(FILENAME_LENA256x256, CV_LOAD_IMAGE_ANYCOLOR | CV_LOAD_IMAGE_ANYDEPTH)
     templ = CvMat.load(FILENAME_LENA_EYES, CV_LOAD_IMAGE_ANYCOLOR | CV_LOAD_IMAGE_ANYDEPTH)
-    
+
     # sqdiff
     result = mat.match_template(templ)
     assert_equal('88663ec44be797ca883fc87bb6d7c09b', hash_img(result))
@@ -1538,7 +1538,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
       result = mat.match_template(templ, method)
       assert_equal('248a391c5a1e1dbcf7a19f3310b5cd7a', hash_img(result))
     }
-    
+
     # ccoeff_normed
     [CV_TM_CCOEFF_NORMED, :ccoeff_normed].each { |method|
       result = mat.match_template(templ, method)
@@ -1581,7 +1581,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
       assert_in_delta(0.0033327, mat_cv.match_shapes(mat_ov, method), 0.00001)
     }
   end
-  
+
   def test_mean_shift
     flunk('FIXME: CvMat#mean_shift is not tested yet.')
   end
@@ -1602,7 +1602,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
 
     size = CvSize.new(15, 15)
     term_criteria = CvTermCriteria.new(100, 0.0)
-    
+
     # initialize contours
     points = []
     center = CvPoint.new(mat.cols / 2, mat.rows / 2)
@@ -1715,7 +1715,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
     velx, vely = curr.optical_flow_hs(prev, prev_velx, prev_vely, :criteria => CvTermCriteria.new(10, 0.01))
     assert_equal('c32a8483e3aec3cd6c33bceeefb8d2f2', hash_img(velx))
     assert_equal('da33e266aece70ed69dcf074acd8fd4e', hash_img(vely))
-    
+
     assert_raise(TypeError) {
       curr.optical_flow_hs(DUMMY_OBJ)
     }
@@ -1749,7 +1749,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
         CvColor::White
       end
     }
-    
+
     velx, vely = curr.optical_flow_lk(prev, CvSize.new(3, 3))
     assert_equal('13333362f0daf6ad732006bd2a32e177', hash_img(velx))
     assert_equal('45dc42034ab606dd61e34a5adc6a1c1b', hash_img(vely))
@@ -1792,7 +1792,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
       assert_equal('08e73a6fa9af7684a5eddc4f30fd46e7', hash_img(velx))
       assert_equal('aabaf1b7393b950c2297f567b6f57d5d', hash_img(vely))
     }
-    
+
     velx, vely = curr.optical_flow_bm(prev, nil, nil, :block_size => CvSize.new(3, 3))
     assert_equal('fe540dc1f0aec2d70b774286eafa3602', hash_img(velx))
     assert_equal('c7cc0f055fe4708396ba6046c0f1c6b5', hash_img(vely))
@@ -1804,7 +1804,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
     velx, vely = curr.optical_flow_bm(prev, nil, nil, :max_range => CvSize.new(5, 5))
     assert_equal('ac10837eeee45fd80a24695cfaf9cfc7', hash_img(velx))
     assert_equal('8c7011c26ac53eaf1fae1aa9324e5979', hash_img(vely))
-    
+
     prev_velx, prev_vely = curr.optical_flow_bm(prev)
     velx, vely = curr.optical_flow_bm(prev, prev_velx, prev_vely)
     assert_equal('6ad6b7a5c935379c0df4b9ec5666f3de', hash_img(velx))
@@ -1838,7 +1838,7 @@ class TestCvMat_imageprocessing < OpenCVTestCase
     assert_equal(254, descriptors1.size)
     assert_equal(Array, descriptors1[0].class)
     assert_equal(128, descriptors1[0].size)
-    
+
     # use mask
     mask = create_cvmat(mat0.rows, mat0.cols, :cv8u, 1) { |j, i|
       if i < mat0.cols / 2
@@ -1874,5 +1874,20 @@ class TestCvMat_imageprocessing < OpenCVTestCase
     # }
     # snap mat0, *results
   end
-end
 
+  def test_accumulate
+    flunk('FIXME: CvMat#accumulate is not implemented yet.')
+  end
+
+  def test_accumulate_square
+    flunk('FIXME: CvMat#accumulate_square is not implemented yet.')
+  end
+
+  def test_accumulate_product
+    flunk('FIXME: CvMat#accumulate_product is not implemented yet.')
+  end
+
+  def test_accumulate_weighted
+    flunk('FIXME: CvMat#accumulate_weighted is not implemented yet.')
+  end
+end
