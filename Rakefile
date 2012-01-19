@@ -11,14 +11,14 @@ HOE = Hoe.spec 'opencv'  do |p|
   p.developer('pcting', 'pcting@gmail.com')
   p.developer('Leszek @zalesz Zalewski', 'contact@zalesz.com')
 
-  p.readme_file   = 'README.rdoc'
-  p.history_file   = 'CHANGELOG.rdoc'
+  p.homepage     = 'https://github.com/driv3r/ruby-opencv'
+  p.readme_file  = 'README.rdoc'
+  p.history_file = 'CHANGELOG.rdoc'
+  p.test_globs   = ['test/test_*.rb']
+  p.spec_extras   = { :extensions => ["ext/opencv/extconf.rb"] }
 
-  p.test_globs = ['test/test_*.rb']
-  p.clean_globs << 'lib/*.so' << 'tmp'
-  p.extra_dev_deps << ['rake-compiler', '>= 0'] << ['hoe-gemspec'] << ['rspec']
-
-  p.spec_extras = { :extensions => ["ext/opencv/extconf.rb"] }
+  p.clean_globs     << 'lib/*.so' << 'tmp'
+  p.extra_dev_deps  << ['rake-compiler', '>= 0'] << ['hoe-gemspec'] << ['rspec']
 end
 
 require 'rake/extensiontask'
