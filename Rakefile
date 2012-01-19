@@ -4,6 +4,7 @@ require 'rubygems'
 require 'hoe'
 
 Hoe.plugin :gemspec
+Hoe.plugin :rubygems
 
 HOE = Hoe.spec 'opencv'  do |p|
   p.developer('lsxi', 'masakazu.yonekura@gmail.com')
@@ -11,7 +12,6 @@ HOE = Hoe.spec 'opencv'  do |p|
   p.developer('pcting', 'pcting@gmail.com')
   p.developer('Leszek @zalesz Zalewski', 'contact@zalesz.com')
 
-  p.homepage     = 'https://github.com/driv3r/ruby-opencv'
   p.readme_file  = 'README.rdoc'
   p.history_file = 'CHANGELOG.rdoc'
   p.test_globs   = ['test/test_*.rb']

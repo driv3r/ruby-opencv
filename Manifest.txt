@@ -1,7 +1,8 @@
 .gitignore
+.travis.yml
 Gemfile
 Gemfile.lock
-History.txt
+CHANGELOG.rdoc
 License.txt
 Manifest.txt
 README.rdoc
