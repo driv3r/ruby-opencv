@@ -5208,9 +5208,18 @@ rb_snake_image(int argc, VALUE *argv, VALUE self)
 VALUE
 rb_accumulate(int argc, VALUE *argv, VALUE self)
 {
-  VALUE source, mask;
-  rb_scan_args(argc, argv, "11", &source, &mask);
-  return self;
+  VALUE src, mask, dst;
+  rb_scan_args(argc, argv, "11", &src, &mask);
+  dst = copy(self);
+
+  try {
+    cvAcc(CVARR(src), CVARR(dst), MASK(mask));
+  }
+  catch (cv::Exception& e) {
+    raise_cverror(e);
+  }
+
+  return dst;
 }
 
 
@@ -5238,9 +5247,18 @@ rb_accumulate(int argc, VALUE *argv, VALUE self)
 VALUE
 rb_accumulate_square(int argc, VALUE *argv, VALUE self)
 {
-  VALUE source, mask;
-  rb_scan_args(argc, argv, "11", &source, &mask);
-  return self;
+  VALUE src, mask, dst;
+  rb_scan_args(argc, argv, "11", &src, &mask);
+  dst = copy(self);
+
+  try {
+    cvSquareAcc(CVARR(src), CVARR(dst), MASK(mask));
+  }
+  catch (cv::Exception& e) {
+    raise_cverror(e);
+  }
+
+  return dst;
 }
 
 
@@ -5269,9 +5287,18 @@ rb_accumulate_square(int argc, VALUE *argv, VALUE self)
 VALUE
 rb_accumulate_product(int argc, VALUE *argv, VALUE self)
 {
-  VALUE source1, source2, mask;
-  rb_scan_args(argc, argv, "21", &source1, &source2, &mask);
-  return self;
+  VALUE src1, src2, mask, dst;
+  rb_scan_args(argc, argv, "21", &src1, &src2, &mask);
+  dst = copy(self);
+
+  try {
+    cvMultiplyAcc(CVARR(src1), CVARR(src2), CVARR(dst), MASK(mask));
+  }
+  catch (cv::Exception& e) {
+    raise_cverror(e);
+  }
+
+  return dst;
 }
 
 
@@ -5305,7 +5332,7 @@ rb_accumulate_weighted(int argc, VALUE *argv, VALUE self)
 {
   VALUE src, alpha, mask, dst;
   rb_scan_args(argc, argv, "21", &src, &alpha, &mask);
-  dst = copy(self);//new_mat_kind_object(cvGetSize(self), self);
+  dst = copy(self);
 
   try {
     cvRunningAvg(CVARR(src), CVARR(dst), NUM2DBL(alpha), MASK(mask));
