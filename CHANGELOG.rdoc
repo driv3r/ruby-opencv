@@ -1,3 +1,8 @@
+=== 0.0.6 / 2012-01-19 03:55
+
+* working installation of opencv on travis for OpenCV 2.1
+* some docs fix
+
 === 0.0.6 / 2012-01-19 02:00
 
 * Added first version of Travis CI to test ruby/opencv across multiple ruby versions
