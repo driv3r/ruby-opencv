@@ -10,7 +10,6 @@ notifications:
 
 before_install:
   - "sudo add-apt-repository 'deb http://ppa.launchpad.net/gijzelaar/opencv2.3/ubuntu natty main'"
-  - "sudo add-apt-repository 'deb-src http://ppa.launchpad.net/gijzelaar/opencv2.3/ubuntu natty main'"
   - "sudo apt-get -qq update"
   - "sudo apt-cache search libcv"
   - "sudo apt-get -q install libcv2.3 libcv-dev libopencv-dev"
