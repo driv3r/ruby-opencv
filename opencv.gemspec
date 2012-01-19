@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{opencv}
-  s.version = "0.0.6.20120119002914"
+  s.version = "0.0.6.20120119014420"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{lsxi}, %q{ser1zw}, %q{pcting}, %q{Leszek @zalesz Zalewski}]
-  s.date = %q{2012-01-18}
+  s.date = %q{2012-01-19}
   s.description = %q{OpenCV wrapper for Ruby.
 
 The initial Open Computer Vision library was originally developed by Intel

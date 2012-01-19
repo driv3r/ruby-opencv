@@ -1,4 +1,4 @@
-= OpenCV
+= OpenCV {<img src="https://secure.travis-ci.org/driv3r/ruby-opencv.png?branch=master" />}[http://travis-ci.org/driv3r/ruby-opencv]
 
 * GitHub Repo :: https://github.com/driv3r/ruby-opencv
 * OpenCV project home :: http://opencv.willowgarage.com/wiki/

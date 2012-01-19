@@ -1,3 +1,7 @@
+=== 0.0.6 / 2012-01-19 02:00
+
+* Added first version of Travis CI to test ruby/opencv across multiple ruby versions
+
 === 0.0.6 / 2012-01-19 00:15
 
 * Improved gems layout
