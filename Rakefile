@@ -12,6 +12,7 @@ HOE = Hoe.spec 'opencv'  do |p|
   p.developer('Leszek @zalesz Zalewski', 'contact@zalesz.com')
 
   p.readme_file   = 'README.rdoc'
+  p.history_file   = 'CHANGELOG.rdoc'
 
   p.test_globs = ['test/test_*.rb']
   p.clean_globs << 'lib/*.so' << 'tmp'
