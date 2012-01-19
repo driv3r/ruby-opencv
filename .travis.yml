@@ -11,5 +11,6 @@ notifications:
 before_install:
   - "sudo add-apt-repository ppa:gijzelaar/opencv2.3"
   - "sudo apt-get -qq update"
-  - "sudo apt-cache showpkg libcv-dev; sudo apt-cache showpkg libopencv-dev;"
-  - "sudo apt-get -q install libcv-dev=2.3.1-1 libopencv-dev=2.3.1-1"
+  - "sudo apt-cache showpkg libcv-dev:i386"
+  - "sudo apt-cache showpkg libopencv-dev:i386"
+  - "sudo apt-get -q install libcv-dev:i386=2.3.1-1 libopencv-dev:i386=2.3.1-1"
