@@ -9,8 +9,7 @@ notifications:
   disabled: true
 
 before_install:
-  - "sudo add-apt-repository ppa:gijzelaar/opencv2.3"
-  - "sudo apt-get -qq update"
-  - "sudo apt-cache showpkg libcv-dev:i386"
-  - "sudo apt-cache showpkg libopencv-dev:i386"
-  - "sudo apt-get -q install libcv-dev:i386=2.3.1-1 libopencv-dev:i386=2.3.1-1"
+# can't use it for now
+#  - "sudo add-apt-repository ppa:gijzelaar/opencv2.3"
+#  - "sudo apt-get -qq update"
+  - "sudo apt-get -q install libcv2.1 libcv-dev libopencv-dev"
