@@ -9,7 +9,6 @@ notifications:
   disabled: true
 
 before_install:
-  - "sudo add-apt-repository ppa:gijzelaar/cuda"
   - "sudo add-apt-repository ppa:gijzelaar/opencv2.3"
   - "sudo apt-get update"
   - "sudo apt-cache search libcv"
